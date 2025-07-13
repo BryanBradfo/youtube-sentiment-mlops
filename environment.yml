@@ -12,3 +12,6 @@ dependencies:
       - torch           # GPU support
       - transformers
       - google-api-python-client
+      - python-dotenv
+      - emoji
+      - tiktoken

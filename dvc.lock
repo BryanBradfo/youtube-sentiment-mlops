@@ -1,0 +1,25 @@
+schema: '2.0'
+stages:
+  fetch:
+    cmd: python src/fetch_comments.py
+    outs:
+    - path: data/raw/commentaires_youtube.csv
+      hash: md5
+      md5: beafa3d4cf6854d8efea16312afc44cb
+      size: 1057608
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - path: data/raw/commentaires_youtube.csv
+      hash: md5
+      md5: beafa3d4cf6854d8efea16312afc44cb
+      size: 1057608
+    - path: src/preprocess.py
+      hash: md5
+      md5: 927c0fc5548db72052bd99f860d32af8
+      size: 951
+    outs:
+    - path: data/processed/commentaires_clean.csv
+      hash: md5
+      md5: 62e562f3af556fb69fc90982fe6d85b0
+      size: 1688263
