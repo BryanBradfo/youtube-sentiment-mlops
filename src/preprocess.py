@@ -1,3 +1,5 @@
+# src/preprocess.py (CORRIGÉ)
+
 import os
 import pandas as pd
 import re
@@ -8,22 +10,29 @@ OUTPUT_CSV = "data/processed/commentaires_clean.csv"
 
 
 def strip_emojis(text: str) -> str:
-    counter = {"i": 0}
-
+    # On met directement le préfixe en minuscules pour être cohérent
     def replace_func(emj_char, emj_data):
-        counter["i"] += 1
-        return f"<EMOJI_{counter['i']}>"
+        return " <emoji> "  # On ajoute des espaces pour séparer l'emoji des mots
 
     return emoji.replace_emoji(text, replace_func)
 
 
 def clean_text(text: str) -> str:
     text = text.lower()
-    text = re.sub(r"http\S+", "", text)
-    text = re.sub(r"@\w+", "", text)
+    text = re.sub(r"http\S+", "", text)  # Retire les URL
+    text = re.sub(r"@\w+", "", text)  # Retire les mentions
+
+    # On remplace les emojis AVANT de supprimer la ponctuation
     text = strip_emojis(text)
-    text = re.sub(r"[^a-z0-9_<>\s]+", "", text)
-    return text.strip()
+
+    # Autorise les caractères alphanumériques (y compris les accents) et l'espace.
+    # On garde aussi '<' et '>' pour nos balises emoji.
+    # Le 'à-ÿ' couvre la plupart des caractères accentués français.
+    text = re.sub(r"[^a-z0-9à-ÿ<>_\s]", "", text)
+
+    # Retire les espaces multiples
+    text = re.sub(r"\s+", " ", text).strip()
+    return text
 
 
 if __name__ == "__main__":
