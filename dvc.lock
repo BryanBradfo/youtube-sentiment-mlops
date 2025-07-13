@@ -23,3 +23,19 @@ stages:
       hash: md5
       md5: 62e562f3af556fb69fc90982fe6d85b0
       size: 1688263
+  annotate:
+    cmd: python src/annotate.py
+    deps:
+    - path: data/processed/commentaires_clean.csv
+      hash: md5
+      md5: 62e562f3af556fb69fc90982fe6d85b0
+      size: 1688263
+    - path: src/annotate.py
+      hash: md5
+      md5: c29c12eb0932b015219524c601fad4fc
+      size: 1565
+    outs:
+    - path: data/processed/commentaires_sentiment.csv
+      hash: md5
+      md5: ac920dd264c870117d68ca6e27ef6d58
+      size: 1962764
