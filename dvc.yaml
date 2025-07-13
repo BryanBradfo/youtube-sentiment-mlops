@@ -1,0 +1,27 @@
+stages:
+  fetch:
+    cmd: python src/fetch_comments.py
+    deps: []
+    outs:
+      - data/raw/commentaires_youtube.csv
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+      - data/raw/commentaires_youtube.csv
+      - src/preprocess.py
+    outs:
+      - data/processed/commentaires_clean.csv
+  annotate:
+    cmd: python src/annotate.py
+    deps:
+      - data/processed/commentaires_clean.csv
+      - src/annotate.py
+    outs:
+      - data/processed/commentaires_sentiment.csv
+  train:
+    cmd: python src/train_stack.py
+    deps:
+      - data/processed/commentaires_sentiment.csv
+      - src/train_stack.py
+    outs:
+      - model/stacking_model/         # MLflow gère la persistence

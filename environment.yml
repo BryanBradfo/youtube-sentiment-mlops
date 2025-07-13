@@ -1,0 +1,14 @@
+name: sentiment-mlops
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - pandas
+  - scikit-learn
+  - dvc
+  - mlflow
+  - pip:
+      - torch           # GPU support
+      - transformers
+      - google-api-python-client
