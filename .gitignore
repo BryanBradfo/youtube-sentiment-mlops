@@ -1,2 +1,59 @@
+# Fichiers et dossiers d'environnement Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+
+# Fichiers de configuration des éditeurs
+.vscode/
+.idea/
+
+# Fichiers de données et de cache DVC
+# DVC suit les données, pas Git. On ignore donc le dossier de données et le cache.
+/data/
+.dvc/cache/
+
+# Fichiers de tracking MLflow
+# Ces résultats sont locaux et ne doivent pas être versionnés.
+/mlruns/
+
+# Fichiers de secrets et de configuration locale
 .env
-data/
+.env.*
+gdrive-credentials.json
+
+# Fichiers du système d'exploitation
+.DS_Store
+Thumbs.db# Fichiers et dossiers d'environnement Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+.venv/
+
+# Fichiers de configuration des éditeurs
+.vscode/
+.idea/
+
+# Fichiers de données et de cache DVC
+# DVC suit les données, pas Git. On ignore donc le dossier de données et le cache.
+/data/
+.dvc/cache/
+
+# Fichiers de tracking MLflow
+# Ces résultats sont locaux et ne doivent pas être versionnés.
+/mlruns/
+
+# Fichiers de secrets et de configuration locale
+.env
+.env.*
+gdrive-credentials.json
+
+# Fichiers du système d'exploitation
+.DS_Store
+Thumbs.db

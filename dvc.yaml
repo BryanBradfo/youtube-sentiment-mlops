@@ -23,5 +23,4 @@ stages:
     deps:
       - data/processed/commentaires_sentiment.csv
       - src/train_stack.py
-    outs:
-      - model/stacking_model/         # MLflow gère la persistence
+    # Pas de section 'outs'. MLflow s'occupe du modèle.

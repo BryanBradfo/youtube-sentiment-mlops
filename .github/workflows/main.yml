@@ -1,0 +1,50 @@
+name: CI - Validation de la Pipeline ML
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  validate-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Étape 1: Récupérer le code du dépôt
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Étape 2: Mettre en place Conda et créer l'environnement
+      # C'est plus rapide que de construire une image Docker à chaque fois.
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: false
+          activate-environment: sentiment-mlops
+          environment-file: environment.yml
+          # Installe la version CPU de PyTorch car les runners GitHub n'ont pas de GPU
+          python-version: "3.10"
+
+      # Étape 3: Linter le code avec Flake8 pour assurer la qualité
+      - name: Lint code with Flake8
+        run: |
+          # Le shell est déjà configuré par setup-miniconda pour utiliser l'env activé
+          flake8 src/ tests/
+
+      # Étape 4: Lancer les tests unitaires avec Pytest
+      - name: Run unit tests
+        run: |
+          pytest
+
+      # Étape 5: Lancer la pipeline DVC complète pour s'assurer qu'elle fonctionne
+      # On ne fait pas de "dvc pull" car nous n'avons pas de remote.
+      # La pipeline va commencer de zéro, ce qui est parfait pour un test.
+      - name: Run DVC pipeline from scratch
+        env:
+          # On passe la clé API de manière sécurisée via les secrets GitHub
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          # DVC a besoin de cette variable dans un fichier .env
+          echo "YOUTUBE_API_KEY=${YOUTUBE_API_KEY}" > .env
+          dvc repro

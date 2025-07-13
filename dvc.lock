@@ -5,14 +5,14 @@ stages:
     outs:
     - path: data/raw/commentaires_youtube.csv
       hash: md5
-      md5: 063ca1bfa2db657ba67cd79bdb2dcd30
+      md5: 3b37df224a4b26cf6ee357c8f81bdd2c
       size: 1057608
   preprocess:
     cmd: python src/preprocess.py
     deps:
     - path: data/raw/commentaires_youtube.csv
       hash: md5
-      md5: 063ca1bfa2db657ba67cd79bdb2dcd30
+      md5: 3b37df224a4b26cf6ee357c8f81bdd2c
       size: 1057608
     - path: src/preprocess.py
       hash: md5
@@ -21,14 +21,14 @@ stages:
     outs:
     - path: data/processed/commentaires_clean.csv
       hash: md5
-      md5: 49db8006fd685af595c813ba3adc92c9
+      md5: a5f7fcca01f98e4e515f9cbf1f1304b8
       size: 1688263
   annotate:
     cmd: python src/annotate.py
     deps:
     - path: data/processed/commentaires_clean.csv
       hash: md5
-      md5: 49db8006fd685af595c813ba3adc92c9
+      md5: a5f7fcca01f98e4e515f9cbf1f1304b8
       size: 1688263
     - path: src/annotate.py
       hash: md5
@@ -37,5 +37,16 @@ stages:
     outs:
     - path: data/processed/commentaires_sentiment.csv
       hash: md5
-      md5: 8e9b0bf1239e842e22c4ca3fa740245f
-      size: 1962764
+      md5: d4d19c539fedc2082cb775e55d8e6217
+      size: 1962709
+  train:
+    cmd: python src/train_stack.py
+    deps:
+    - path: data/processed/commentaires_sentiment.csv
+      hash: md5
+      md5: d4d19c539fedc2082cb775e55d8e6217
+      size: 1962709
+    - path: src/train_stack.py
+      hash: md5
+      md5: e924aaccbb05367cb585ec860d104a86
+      size: 2264

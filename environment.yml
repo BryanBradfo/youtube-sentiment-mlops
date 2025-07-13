@@ -1,25 +1,20 @@
 name: sentiment-mlops
 channels:
-- conda-forge
-- defaults
+  - conda-forge
+  - defaults
 dependencies:
-- python=3.10
-- pip
-- pandas
-- scikit-learn
-- dvc
-- mlflow
-
-# Installation de PyTorch GPU CUDA 12.6 via pip wheels
-
-- pip:
-  - torch
-  - torchvision
-  - torchaudio
-  - -f https://download.pytorch.org/whl/cu126
-  - transformers
-  - google-api-python-client
-  - python-dotenv
-  - emoji
-  - sentencepiece
-  - tiktoken
+  - python=3.10
+  - pip
+  - pandas
+  - scikit-learn
+  - dvc
+  - mlflow
+  - pytest 
+  - flake8
+  - pip:
+    - google-api-python-client
+    - python-dotenv
+    - emoji
+    - sentencepiece
+    - transformers
+    - tiktoken
