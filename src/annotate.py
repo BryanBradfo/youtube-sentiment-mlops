@@ -1,10 +1,15 @@
 import os
 import pandas as pd
 import torch
-from transformers import XLMRobertaTokenizer, XLMRobertaForSequenceClassification, pipeline
+from transformers import (
+    XLMRobertaTokenizer,
+    XLMRobertaForSequenceClassification,
+    pipeline,
+)
 
-INPUT_CSV  = "data/processed/commentaires_clean.csv"
+INPUT_CSV = "data/processed/commentaires_clean.csv"
 OUTPUT_CSV = "data/processed/commentaires_sentiment.csv"
+
 
 def annotate_sentiment(df: pd.DataFrame) -> pd.DataFrame:
     # Choix du device GPU si disponible, sinon CPU
@@ -20,10 +25,7 @@ def annotate_sentiment(df: pd.DataFrame) -> pd.DataFrame:
     )
 
     sentiment_pipe = pipeline(
-        "sentiment-analysis",
-        model=model,
-        tokenizer=tokenizer,
-        device=device
+        "sentiment-analysis", model=model, tokenizer=tokenizer, device=device
     )
 
     labels, scores = [], []
@@ -34,8 +36,9 @@ def annotate_sentiment(df: pd.DataFrame) -> pd.DataFrame:
         scores.append(res["score"])
 
     df["sentiment"] = labels
-    df["score"]     = scores
+    df["score"] = scores
     return df
+
 
 if __name__ == "__main__":
     os.makedirs(os.path.dirname(OUTPUT_CSV), exist_ok=True)

@@ -12,9 +12,14 @@ dependencies:
   - pytest 
   - flake8
   - pip:
+    - ruff
     - google-api-python-client
     - python-dotenv
     - emoji
     - sentencepiece
     - transformers
     - tiktoken
+
+    - torch
+    - torchvision
+    - torchaudio

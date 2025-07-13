@@ -2,35 +2,37 @@ import os
 import pandas as pd
 from googleapiclient.discovery import build
 from dotenv import load_dotenv
+
 load_dotenv()
 
-API_KEY    = os.getenv("YOUTUBE_API_KEY")
+API_KEY = os.getenv("YOUTUBE_API_KEY")
 print("🔑 API_KEY chargée :", API_KEY)
 
-VIDEO_ID   = "ClF55GE7zPI"
+VIDEO_ID = "ClF55GE7zPI"
 OUTPUT_CSV = "data/raw/commentaires_youtube.csv"
+
 
 def fetch_comments(api_key: str, video_id: str) -> pd.DataFrame:
     yt = build("youtube", "v3", developerKey=api_key)
     all_comments = []
     req = yt.commentThreads().list(
-        part="snippet",
-        videoId=video_id,
-        textFormat="plainText",
-        maxResults=100
+        part="snippet", videoId=video_id, textFormat="plainText", maxResults=100
     )
     while req:
         res = req.execute()
         for item in res["items"]:
             s = item["snippet"]["topLevelComment"]["snippet"]
-            all_comments.append({
-                "auteur":          s["authorDisplayName"],
-                "commentaire":     s["textDisplay"],
-                "likes":           s["likeCount"],
-                "date_publication":s["publishedAt"]
-            })
+            all_comments.append(
+                {
+                    "auteur": s["authorDisplayName"],
+                    "commentaire": s["textDisplay"],
+                    "likes": s["likeCount"],
+                    "date_publication": s["publishedAt"],
+                }
+            )
         req = yt.commentThreads().list_next(req, res)
     return pd.DataFrame(all_comments)
+
 
 if __name__ == "__main__":
     os.makedirs(os.path.dirname(OUTPUT_CSV), exist_ok=True)

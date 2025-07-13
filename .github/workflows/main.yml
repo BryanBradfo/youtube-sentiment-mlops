@@ -31,9 +31,10 @@ jobs:
           python-version: "3.10"
 
       # Étape 3: Linter le code avec Flake8
-      - name: Lint code with Flake8
+      - name: Lint code with Ruff
         run: |
-          flake8 src/ tests/
+          ruff check .
+          ruff format --check .
 
       # Étape 4: Lancer les tests unitaires avec Pytest
       - name: Run unit tests

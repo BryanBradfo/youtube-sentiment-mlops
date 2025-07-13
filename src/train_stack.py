@@ -22,32 +22,32 @@ def load_data():
 
 def build_and_train(X_train, y_train):
     # TF-IDF vectorisation
-    tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1,2))
+    tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
     X_vec = tfidf.fit_transform(X_train)
 
     # Modèle de base et stacking
     lr = LogisticRegression(max_iter=1000)
     stack = StackingClassifier(
-        estimators=[("lr", lr)],
-        final_estimator=LogisticRegression(),
-        passthrough=True
+        estimators=[("lr", lr)], final_estimator=LogisticRegression(), passthrough=True
     )
 
     mlflow.set_experiment("sentiment-stack")
     with mlflow.start_run():
         # Log des paramètres
-        mlflow.log_params({
-            "vect_max_features": 5000,
-            "ngram_range": "(1,2)",
-            "base_model": "LogisticRegression"
-        })
+        mlflow.log_params(
+            {
+                "vect_max_features": 5000,
+                "ngram_range": "(1,2)",
+                "base_model": "LogisticRegression",
+            }
+        )
         # Entraînement
         stack.fit(X_vec, y_train)
         # Enregistrement du modèle dans MLflow et registre
         mlflow.sklearn.log_model(
             sk_model=stack,
             artifact_path="stacking_model",
-            registered_model_name="SentimentStack"
+            registered_model_name="SentimentStack",
         )
         return tfidf, stack
 
