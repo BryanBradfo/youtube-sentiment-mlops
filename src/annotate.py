@@ -1,28 +1,34 @@
-# src/annotate.py
 import os
 import pandas as pd
+import torch
 from transformers import XLMRobertaTokenizer, XLMRobertaForSequenceClassification, pipeline
 
 INPUT_CSV  = "data/processed/commentaires_clean.csv"
 OUTPUT_CSV = "data/processed/commentaires_sentiment.csv"
 
 def annotate_sentiment(df: pd.DataFrame) -> pd.DataFrame:
-    # Charge MANUELLEMENT le tokenizer et le modèle lents
+    # Choix du device GPU si disponible, sinon CPU
+    device = 0 if torch.cuda.is_available() else -1
+    print(f"Using device: {'GPU' if device == 0 else 'CPU'}")
+
+    # Chargement du tokenizer et du modèle lents
     tokenizer = XLMRobertaTokenizer.from_pretrained(
         "cardiffnlp/twitter-xlm-roberta-base-sentiment"
     )
     model = XLMRobertaForSequenceClassification.from_pretrained(
         "cardiffnlp/twitter-xlm-roberta-base-sentiment"
     )
+
     sentiment_pipe = pipeline(
         "sentiment-analysis",
         model=model,
         tokenizer=tokenizer,
-        device=0
+        device=device
     )
 
     labels, scores = [], []
-    for txt in df["commentaire_clean"].tolist():
+    # Conversion des NaN en chaîne vide et forçage en str
+    for txt in df["commentaire_clean"].fillna("").astype(str).tolist():
         res = sentiment_pipe(txt[:512])[0]
         labels.append(res["label"])
         scores.append(res["score"])

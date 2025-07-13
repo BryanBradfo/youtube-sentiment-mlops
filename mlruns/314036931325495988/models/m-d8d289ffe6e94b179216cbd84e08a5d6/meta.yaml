@@ -1,0 +1,10 @@
+artifact_location: file:///C:/Users/Bradf/Desktop/Work/Projets/Youtube/mlruns/314036931325495988/models/m-d8d289ffe6e94b179216cbd84e08a5d6/artifacts
+creation_timestamp: 1752395754237
+experiment_id: '314036931325495988'
+last_updated_timestamp: 1752395758563
+model_id: m-d8d289ffe6e94b179216cbd84e08a5d6
+model_type: null
+name: stacking_model
+source_run_id: 315591be77a64700843a4bb7bad5a57f
+status: 2
+status_message: null
