@@ -37,8 +37,7 @@ def download_and_load_model():
 
     # Extraire et charger le modèle
     # Le chemin dépend de la structure de votre zip. MLflow sauve le modèle dans un sous-dossier.
-    model_path_in_zip = "mlruns/837460228489422544/models/m-5ff3f9180f9b4c5dbf7e371c06ef39b0/artifacts/model.pkl"
-
+    model_path_in_zip = "mlruns/184124372186689861/models/m-7e0da52262c64c4cb2bfeff54dac9e59/artifacts/model.pkl"
     with zip_file.open(model_path_in_zip) as model_file:
         model = joblib.load(model_file)
 
