@@ -1,0 +1,8 @@
+streamlit
+pandas
+requests
+scikit-learn
+joblib
+matplotlib
+google-api-python-client
+emoji
