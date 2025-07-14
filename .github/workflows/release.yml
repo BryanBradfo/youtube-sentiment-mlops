@@ -1,0 +1,57 @@
+# .github/workflows/release.yml
+
+name: CD - Créer une Release du Modèle
+
+on:
+  push:
+    # Se déclenche uniquement quand un tag est poussé (ex: v1.0, v1.2.3)
+    tags:
+      - 'v*.*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        shell: bash -l {0}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Miniconda
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-activate-base: false
+          activate-environment: sentiment-mlops
+          environment-file: environment.yml
+          python-version: "3.10"
+        
+      - name: Installer Ruff
+        run: pip install ruff
+
+      # On ne fait pas de linting ou de test ici, car la CI l'a déjà fait
+      # sur la branche avant le tag. On se concentre sur la construction.
+
+      - name: Exécuter la pipeline DVC pour générer les artefacts
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+        run: |
+          echo "YOUTUBE_API_KEY=${YOUTUBE_API_KEY}" > .env
+          dvc repro
+
+      - name: Packager les artefacts pour la release
+        run: |
+          # Crée une archive zip contenant les résultats de l'expérience MLflow
+          # et le dvc.lock qui est la "signature" des données utilisées.
+          zip -r release.zip mlruns/ dvc.lock reports/
+
+      - name: Créer la Release sur GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          # Le corps de la release sera le rapport de classification
+          body_path: reports/metrics.txt
+          # Attache l'archive zip à la release
+          files: release.zip
+          # Le nom du tag (ex: v1.0) sera automatiquement utilisé comme nom de la release

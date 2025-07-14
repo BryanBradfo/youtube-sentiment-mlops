@@ -6,9 +6,13 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import StackingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+import os
 
 # Chemin du dataset annoté
 DATA_CSV = "data/processed/commentaires_sentiment.csv"
+
+# Fichier pour le rapport de performance
+METRICS_FILE = "reports/metrics.txt"
 
 
 def load_data():
@@ -56,7 +60,14 @@ def evaluate(tfidf, model, X_test, y_test):
     # Évaluation
     X_vec = tfidf.transform(X_test)
     preds = model.predict(X_vec)
-    print(classification_report(y_test, preds))
+    report = classification_report(y_test, preds)
+    print(report)
+
+    os.makedirs(os.path.dirname(METRICS_FILE), exist_ok=True)
+    with open(METRICS_FILE, "w") as f:
+        f.write(report)
+
+    # Logguer la métrique principale dans MLflow
     mlflow.log_metric("accuracy", float((preds == y_test).mean()))
 
 
