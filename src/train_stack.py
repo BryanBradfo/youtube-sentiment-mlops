@@ -28,8 +28,6 @@ def load_data():
 def build_and_train(X_train, y_train):
     # TF-IDF vectorisation
     tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
-    X_vec = tfidf.fit_transform(X_train)
-
     # Modèle de base et stacking
     lr = LogisticRegression(max_iter=1000)
     stack = StackingClassifier(
@@ -49,7 +47,7 @@ def build_and_train(X_train, y_train):
             }
         )
         # Entraînement
-        model_pipeline.fit(X_vec, y_train)
+        model_pipeline.fit(X_train, y_train)
         # Enregistrement du modèle dans MLflow et registre
         mlflow.sklearn.log_model(
             sk_model=model_pipeline,
