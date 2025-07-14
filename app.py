@@ -1,10 +1,8 @@
 import streamlit as st
-import pandas as pd
 import requests
 import zipfile
 import io
 import joblib  # Pour charger le modèle .pkl
-import os
 from src.fetch_comments import fetch_comments
 from src.preprocess import clean_text
 import matplotlib.pyplot as plt
