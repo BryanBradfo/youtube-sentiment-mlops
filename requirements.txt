@@ -6,3 +6,4 @@ scikit-learn
 google-api-python-client
 emoji
 pandas
+python-dotenv
