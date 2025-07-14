@@ -27,7 +27,7 @@ jobs:
         with:
           auto-activate-base: false
           activate-environment: sentiment-mlops
-          environment-file: environment.yml
+          environment-file: ci_environment.yml
           python-version: "3.10"
 
       # Étape 3: Linter le code avec Flake8
@@ -44,7 +44,13 @@ jobs:
       # Étape 5: Lancer la pipeline DVC complète
       - name: Run DVC pipeline from scratch
         env:
+          # On passe la clé API de manière sécurisée via les secrets GitHub
+          # La rendre disponible comme variable d'environnement pour l'étape
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
         run: |
           echo "YOUTUBE_API_KEY=${YOUTUBE_API_KEY}" > .env
+          
+          echo "Contenu du fichier .env :"
+          cat .env
+          
           dvc repro

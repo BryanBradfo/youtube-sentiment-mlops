@@ -57,3 +57,6 @@ gdrive-credentials.json
 # Fichiers du système d'exploitation
 .DS_Store
 Thumbs.db
+
+# Fichiers de cache Streamlit
+.streamlit/

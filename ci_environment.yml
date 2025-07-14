@@ -12,6 +12,7 @@ dependencies:
   - pytest 
   - flake8
   - pip:
+    - joblib
     - ruff
     - google-api-python-client
     - python-dotenv

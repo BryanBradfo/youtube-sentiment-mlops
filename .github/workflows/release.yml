@@ -26,7 +26,7 @@ jobs:
         with:
           auto-activate-base: false
           activate-environment: sentiment-mlops
-          environment-file: environment.yml
+          environment-file: ci_environment.yml
           python-version: "3.10"
         
       - name: Installer Ruff

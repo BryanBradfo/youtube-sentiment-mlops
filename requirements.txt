@@ -1,8 +1,8 @@
 streamlit
-pandas
 requests
-scikit-learn
 joblib
 matplotlib
+scikit-learn
 google-api-python-client
 emoji
+pandas
