@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import StackingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
+from sklearn.pipeline import Pipeline
 import os
 
 # Chemin du dataset annoté
@@ -35,6 +36,8 @@ def build_and_train(X_train, y_train):
         estimators=[("lr", lr)], final_estimator=LogisticRegression(), passthrough=True
     )
 
+    model_pipeline = Pipeline([("tfidf", tfidf), ("classifier", stack)])
+
     mlflow.set_experiment("sentiment-stack")
     with mlflow.start_run():
         # Log des paramètres
@@ -46,20 +49,19 @@ def build_and_train(X_train, y_train):
             }
         )
         # Entraînement
-        stack.fit(X_vec, y_train)
+        model_pipeline.fit(X_vec, y_train)
         # Enregistrement du modèle dans MLflow et registre
         mlflow.sklearn.log_model(
-            sk_model=stack,
-            artifact_path="stacking_model",
+            sk_model=model_pipeline,
+            artifact_path="sentiment_pipeline",
             registered_model_name="SentimentStack",
         )
-        return tfidf, stack
+        return model_pipeline
 
 
-def evaluate(tfidf, model, X_test, y_test):
+def evaluate(model, X_test, y_test):
     # Évaluation
-    X_vec = tfidf.transform(X_test)
-    preds = model.predict(X_vec)
+    preds = model.predict(X_test)
     report = classification_report(y_test, preds)
     print(report)
 
@@ -67,15 +69,13 @@ def evaluate(tfidf, model, X_test, y_test):
     with open(METRICS_FILE, "w") as f:
         f.write(report)
 
-    # Logguer la métrique principale dans MLflow
     mlflow.log_metric("accuracy", float((preds == y_test).mean()))
 
 
 if __name__ == "__main__":
-    # Chargement des données
     X_train, X_test, y_train, y_test = load_data()
-    # Entraînement
-    tfidf, model = build_and_train(X_train, y_train)
-    # Évaluation
-    evaluate(tfidf, model, X_test, y_test)
+    # L'entraînement retourne la pipeline complète
+    model = build_and_train(X_train, y_train)
+    # L'évaluation utilise directement la pipeline
+    evaluate(model, X_test, y_test)
     print("Entraînement et évaluation terminés.")
