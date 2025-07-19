@@ -126,9 +126,13 @@ if st.button("Analyser les commentaires"):
                         "cest",
                         "jai",
                         "vraiment",
+                        "ça",
+                        "fait",
+                        "être",
+                        "avoir",
+                        "emoji",
                     ]
                 )
-
                 wordcloud = WordCloud(
                     stopwords=stopwords, background_color="white", width=800, height=400
                 ).generate(full_text)
@@ -141,31 +145,58 @@ if st.button("Analyser les commentaires"):
             # --- NOUVELLE SECTION 2 : AFFICHAGE D'EXEMPLES DE COMMENTAIRES ---
             st.subheader("Exemples de Commentaires par Sentiment")
 
+            df["sentiment_lower"] = df["sentiment"].str.lower()
+
             # Créer des onglets pour chaque sentiment
             tab_pos, tab_neu, tab_neg = st.tabs(
                 ["👍 Positifs", "😐 Neutres", "👎 Négatifs"]
             )
 
             with tab_pos:
-                st.write("Quelques commentaires jugés positifs :")
-                positive_samples = df[df["sentiment"] == "Positive"][
-                    ["auteur", "commentaire"]
-                ].sample(min(5, len(df[df["sentiment"] == "Positive"])))
-                st.dataframe(positive_samples, hide_index=True)
+                st.write("Top 10 des commentaires jugés positifs :")
+                df_pos = df[df["sentiment_lower"] == "positive"]
+                if not df_pos.empty:
+                    # AMÉLIORÉ : Tri par likes et affichage du top 10
+                    top_10_pos = df_pos.sort_values(by="likes", ascending=False).head(
+                        10
+                    )
+                    st.dataframe(
+                        top_10_pos[["auteur", "commentaire", "likes"]],
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+                else:
+                    st.write("Aucun commentaire positif trouvé.")
 
             with tab_neu:
-                st.write("Quelques commentaires jugés neutres :")
-                neutral_samples = df[df["sentiment"] == "Neutral"][
-                    ["auteur", "commentaire"]
-                ].sample(min(5, len(df[df["sentiment"] == "Neutral"])))
-                st.dataframe(neutral_samples, hide_index=True)
+                st.write("Top 10 des commentaires jugés neutres :")
+                df_neu = df[df["sentiment_lower"] == "neutral"]
+                if not df_neu.empty:
+                    top_10_neu = df_neu.sort_values(by="likes", ascending=False).head(
+                        10
+                    )
+                    st.dataframe(
+                        top_10_neu[["auteur", "commentaire", "likes"]],
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+                else:
+                    st.write("Aucun commentaire neutre trouvé.")
 
             with tab_neg:
-                st.write("Quelques commentaires jugés négatifs :")
-                negative_samples = df[df["sentiment"] == "Negative"][
-                    ["auteur", "commentaire"]
-                ].sample(min(5, len(df[df["sentiment"] == "Negative"])))
-                st.dataframe(negative_samples, hide_index=True)
+                st.write("Top 10 des commentaires jugés négatifs :")
+                df_neg = df[df["sentiment_lower"] == "negative"]
+                if not df_neg.empty:
+                    top_10_neg = df_neg.sort_values(by="likes", ascending=False).head(
+                        10
+                    )
+                    st.dataframe(
+                        top_10_neg[["auteur", "commentaire", "likes"]],
+                        use_container_width=True,
+                        hide_index=True,
+                    )
+                else:
+                    st.write("Aucun commentaire négatif trouvé.")
 
         except Exception as e:
             st.error(f"Une erreur est survenue : {e}")
