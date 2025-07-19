@@ -6,6 +6,7 @@ import joblib  # Pour charger le modèle .pkl
 from src.fetch_comments import fetch_comments
 from src.preprocess import clean_text
 import matplotlib.pyplot as plt
+from wordcloud import WordCloud, STOPWORDS
 
 # --- CONFIGURATION ET CHARGEMENT DU MODÈLE ---
 
@@ -94,6 +95,77 @@ if st.button("Analyser les commentaires"):
 
             st.write("Distribution des sentiments :")
             st.dataframe(sentiment_counts)
+
+            st.subheader("Nuage de Mots-Clés")
+            with st.spinner("Génération du nuage de mots..."):
+                # Joindre tous les commentaires en un seul grand texte
+                full_text = " ".join(comment for comment in df.commentaire_clean)
+
+                # Définir les mots à ignorer (stopwords) en français
+                stopwords = set(STOPWORDS)
+                stopwords.update(
+                    [
+                        "le",
+                        "la",
+                        "les",
+                        "de",
+                        "des",
+                        "du",
+                        "et",
+                        "est",
+                        "il",
+                        "elle",
+                        "on",
+                        "un",
+                        "une",
+                        "que",
+                        "qui",
+                        "pour",
+                        "pas",
+                        "plus",
+                        "cest",
+                        "jai",
+                        "vraiment",
+                    ]
+                )
+
+                wordcloud = WordCloud(
+                    stopwords=stopwords, background_color="white", width=800, height=400
+                ).generate(full_text)
+
+                fig_wc, ax_wc = plt.subplots()
+                ax_wc.imshow(wordcloud, interpolation="bilinear")
+                ax_wc.axis("off")
+                st.pyplot(fig_wc)
+
+            # --- NOUVELLE SECTION 2 : AFFICHAGE D'EXEMPLES DE COMMENTAIRES ---
+            st.subheader("Exemples de Commentaires par Sentiment")
+
+            # Créer des onglets pour chaque sentiment
+            tab_pos, tab_neu, tab_neg = st.tabs(
+                ["👍 Positifs", "😐 Neutres", "👎 Négatifs"]
+            )
+
+            with tab_pos:
+                st.write("Quelques commentaires jugés positifs :")
+                positive_samples = df[df["sentiment"] == "Positive"][
+                    ["auteur", "commentaire"]
+                ].sample(min(5, len(df[df["sentiment"] == "Positive"])))
+                st.dataframe(positive_samples, hide_index=True)
+
+            with tab_neu:
+                st.write("Quelques commentaires jugés neutres :")
+                neutral_samples = df[df["sentiment"] == "Neutral"][
+                    ["auteur", "commentaire"]
+                ].sample(min(5, len(df[df["sentiment"] == "Neutral"])))
+                st.dataframe(neutral_samples, hide_index=True)
+
+            with tab_neg:
+                st.write("Quelques commentaires jugés négatifs :")
+                negative_samples = df[df["sentiment"] == "Negative"][
+                    ["auteur", "commentaire"]
+                ].sample(min(5, len(df[df["sentiment"] == "Negative"])))
+                st.dataframe(negative_samples, hide_index=True)
 
         except Exception as e:
             st.error(f"Une erreur est survenue : {e}")
