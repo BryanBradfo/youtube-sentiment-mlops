@@ -5,48 +5,48 @@ stages:
     outs:
     - path: data/raw/commentaires_youtube.csv
       hash: md5
-      md5: 3b37df224a4b26cf6ee357c8f81bdd2c
-      size: 1057608
+      md5: dc0f9f284607167b135644e6660d5372
+      size: 1061398
   preprocess:
     cmd: python src/preprocess.py
     deps:
     - path: data/raw/commentaires_youtube.csv
       hash: md5
-      md5: 3b37df224a4b26cf6ee357c8f81bdd2c
-      size: 1057608
+      md5: dc0f9f284607167b135644e6660d5372
+      size: 1061398
     - path: src/preprocess.py
       hash: md5
-      md5: 927c0fc5548db72052bd99f860d32af8
-      size: 951
+      md5: 6e191a85c5d1bebaa286ae17e78a1f30
+      size: 1462
     outs:
     - path: data/processed/commentaires_clean.csv
       hash: md5
-      md5: a5f7fcca01f98e4e515f9cbf1f1304b8
-      size: 1688263
+      md5: 15c7c94d9db22a934ee95802de31f6ca
+      size: 1749038
   annotate:
     cmd: python src/annotate.py
     deps:
     - path: data/processed/commentaires_clean.csv
       hash: md5
-      md5: a5f7fcca01f98e4e515f9cbf1f1304b8
-      size: 1688263
+      md5: 15c7c94d9db22a934ee95802de31f6ca
+      size: 1749038
     - path: src/annotate.py
       hash: md5
-      md5: c29c12eb0932b015219524c601fad4fc
-      size: 1565
+      md5: 0040ee85a48887ebaa48b4c7374ff389
+      size: 1558
     outs:
     - path: data/processed/commentaires_sentiment.csv
       hash: md5
-      md5: d4d19c539fedc2082cb775e55d8e6217
-      size: 1962709
+      md5: 4d57829228801200ef700269cd60d0e0
+      size: 2023593
   train:
     cmd: python src/train_stack.py
     deps:
     - path: data/processed/commentaires_sentiment.csv
       hash: md5
-      md5: d4d19c539fedc2082cb775e55d8e6217
-      size: 1962709
+      md5: 4d57829228801200ef700269cd60d0e0
+      size: 2023593
     - path: src/train_stack.py
       hash: md5
-      md5: e924aaccbb05367cb585ec860d104a86
-      size: 2264
+      md5: 21907e4e4d69ac8319b1a1494fa45f6e
+      size: 2886

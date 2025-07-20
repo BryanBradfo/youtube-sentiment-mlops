@@ -8,3 +8,4 @@ emoji
 pandas
 python-dotenv
 wordcloud
+lightgbm

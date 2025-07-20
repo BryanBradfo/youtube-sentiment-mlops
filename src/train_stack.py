@@ -3,6 +3,7 @@ import mlflow.sklearn
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
+import lightgbm as lgb
 from sklearn.ensemble import StackingClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
@@ -29,12 +30,22 @@ def build_and_train(X_train, y_train):
     # TF-IDF vectorisation
     tfidf = TfidfVectorizer(max_features=5000, ngram_range=(1, 2))
     # Modèle de base et stacking
-    lr = LogisticRegression(max_iter=1000)
-    stack = StackingClassifier(
-        estimators=[("lr", lr)], final_estimator=LogisticRegression(), passthrough=True
-    )
+    # lr = LogisticRegression(max_iter=1000)
+    # stack = StackingClassifier(
+    #     estimators=[("lr", lr)], final_estimator=LogisticRegression(), passthrough=True
+    # )
 
-    model_pipeline = Pipeline([("tfidf", tfidf), ("classifier", stack)])
+    # model_pipeline = Pipeline([("tfidf", tfidf), ("classifier", stack)])
+
+    lgbm_classifier = lgb.LGBMClassifier(random_state=42)
+
+    # Étape 2: Créer la pipeline complète
+    model_pipeline = Pipeline(
+        [
+            ("tfidf", tfidf),
+            ("classifier", lgbm_classifier),
+        ]
+    )
 
     mlflow.set_experiment("sentiment-stack")
     with mlflow.start_run():
@@ -43,7 +54,7 @@ def build_and_train(X_train, y_train):
             {
                 "vect_max_features": 5000,
                 "ngram_range": "(1,2)",
-                "base_model": "LogisticRegression",
+                "model_type": "LightGBM",
             }
         )
         # Entraînement
@@ -52,7 +63,7 @@ def build_and_train(X_train, y_train):
         mlflow.sklearn.log_model(
             sk_model=model_pipeline,
             artifact_path="sentiment_pipeline",
-            registered_model_name="SentimentStack",
+            registered_model_name="SentimentStackLGBM",
         )
         return model_pipeline
 
